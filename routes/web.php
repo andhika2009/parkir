@@ -17,14 +17,15 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Routes
     Route::middleware([RoleMiddleware::class . ':admin'])->group(function () {
-        Route::get('/admin/dashboard', function () {
-            $totalUser = \App\Models\User::count();
-            $totalKendaraan = \App\Models\Kendaraan::count();
-            $totalArea = \App\Models\Area::count();
-            $totalTarif = \App\Models\Tarif::count();
-            $logs = \App\Models\LogAktivitas::with('user')->latest()->take(5)->get();
+Route::get('/admin/dashboard', function () {
+    $totalUser = \App\Models\User::count();
+    $totalKendaraan = 0;
+    $totalArea = 0;
+    $totalTarif = 0;
+    $logs = [];
 
-            return view('admin.dashboard', compact('totalUser', 'totalKendaraan', 'totalArea', 'totalTarif', 'logs'));
+    return view('admin.dashboard', compact('totalUser', 'totalKendaraan', 'totalArea', 'totalTarif', 'logs'));
+ 
         })->name('admin.dashboard');
 
         Route::get('/admin/log', [LogController::class, 'index'])->name('admin.log.index');
@@ -55,7 +56,8 @@ Route::delete('/admin/area/{id}', [AreaController::class, 'destroy'])->name('are
     });
     // Owner Routes
     Route::middleware([RoleMiddleware::class . ':owner'])->group(function () {
-    Route::middleware([RoleMiddleware::class . ':owner'])->group(function () {
+        // Owner Routes
+Route::middleware([RoleMiddleware::class . ':owner'])->group(function () {
     Route::get('/owner/laporan', [OwnerController::class, 'laporan'])->name('owner.laporan');
 });
         Route::get('/owner/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');

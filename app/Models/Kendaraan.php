@@ -12,11 +12,12 @@ class Kendaraan extends Model
     protected $table = 'tb_kendaraan';
     protected $primaryKey = 'id_kendaraan';
 
-    protected $fillable = [
-        'plat_nomor',
-        'jenis_kendaraan',
-        'pemilik',
-        'id_user',
-        'id_tarif',
-    ];
+    public $timestamps = false;
+
+   protected $fillable = [
+    'no_plat', // Sesuaikan di sini (bukan plat_nomor)
+    'pemilik',
+    'jenis_kendaraan',
+    'id_tarif'
+];
 }

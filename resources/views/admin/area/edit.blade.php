@@ -8,7 +8,7 @@
         <h5 class="m-0 fw-bold">Form Edit Area Parkir</h5>
     </div>
     <div class="card-body">
-       <form action="{{ route('admin.area.update', $area) }}" method="POST">
+       <form action="{{ route('admin.area.update', $area->id_area) }}" method="POST">
             @csrf
             @method('PUT')
             <div class="mb-3">

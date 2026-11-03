@@ -10,8 +10,7 @@ class TransaksiController extends Controller
 {
     public function index()
     {
-        // Ambil data transaksi aktif beserta gabungan jadual tarif (Left Join)
-        // Gunakan leftJoin supaya jika tarif kosong/null, data transaksi tetap keluar tanpa Error 500
+        // Query menggunakan DB Builder agar bebas dari error relasi Model Eloquent
         $dataTampil = DB::table('tb_transaksi')
             ->leftJoin('tb_tarif', 'tb_transaksi.id_tarif', '=', 'tb_tarif.id_tarif')
             ->select('tb_transaksi.*', 'tb_tarif.jenis_kendaraan')
@@ -29,7 +28,6 @@ class TransaksiController extends Controller
 
         $plat = strtoupper(trim($request->no_plat));
 
-        // Simpan transaksi baru
         DB::table('tb_transaksi')->insert([
             'no_plat' => $plat,
             'waktu_masuk' => now(),
@@ -37,14 +35,14 @@ class TransaksiController extends Controller
             'updated_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', 'Kendaraan ' . $plat . ' berhasil dicatat masuk!');
+        return redirect()->back()->with('success', 'Kendaraan berhasil dicatat!');
     }
 
     public function update(Request $request, $id)
     {
-        // Proses keluar / bayar transaksi
         DB::table('tb_transaksi')
             ->where('id_transaksi', $id)
+            ->orWhere('id', $id)
             ->update([
                 'waktu_keluar' => now(),
                 'updated_at' => now(),

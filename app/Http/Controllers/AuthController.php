@@ -47,15 +47,15 @@ class AuthController extends Controller
         }
 
         // 4. Login-kan user dan catat log aktivitas
-        Auth::login($user);
+    Auth::login($user);
 
-        LogAktivitas::create([
-            'user_id' => $user->id,
-            'aktivitas' => 'Berhasil login ke sistem',
-            'ip_address' => $request->ip(),
-        ]);
+    // LogAktivitas::create([
+    //     'user_id' => $user->id,
+    //     'aktivitas' => 'Berhasil login ke sistem',
+    //     'ip_address' => $request->ip(),
+    // ]);
 
-        // 5. Redirect sesuai Role
+    // 5. Redirect sesuai Role
         if ($user->role === 'petugas') {
             return redirect('/petugas/dashboard');
         } elseif ($user->role === 'owner') {
