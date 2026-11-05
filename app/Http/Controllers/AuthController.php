@@ -16,69 +16,41 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        // 1. Validasi Input
         $request->validate([
             'username' => 'required',
             'password' => 'required',
         ]);
 
-        // 2. Cari user berdasarkan user_name
-        $user = User::where('user_name', $request->username)->first();
+        $credentials = [
+            'user_name' => $request->input('username'),
+            'password' => $request->input('password'),
+        ];
 
-        if (!$user) {
-            return back()->withErrors([
-                'login' => 'Username "' . $request->username . '" tidak ditemukan!',
-            ])->withInput();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            $user = Auth::user();
+
+            if ($user->role === 'admin') {
+                return redirect('/admin/dashboard');
+            } elseif ($user->role === 'petugas') {
+                return redirect('/petugas/dashboard');
+            } elseif ($user->role === 'owner') {
+                return redirect('/owner/dashboard');
+            }
+
+            return redirect('/');
         }
 
-        // 3. Pengecekan Password
-        $inputPass = $request->password;
-        $dbPass = $user->password;
-
-        $isMatch = ($inputPass === $dbPass) 
-                || ($inputPass === 'password') 
-                || ($inputPass === 'admin') 
-                || \Hash::check($inputPass, $dbPass);
-
-        if (!$isMatch) {
-            return back()->withErrors([
-                'login' => 'Password salah!',
-            ])->withInput();
-        }
-
-        // 4. Login-kan user dan catat log aktivitas
-    Auth::login($user);
-
-    // LogAktivitas::create([
-    //     'user_id' => $user->id,
-    //     'aktivitas' => 'Berhasil login ke sistem',
-    //     'ip_address' => $request->ip(),
-    // ]);
-
-    // 5. Redirect sesuai Role
-        if ($user->role === 'petugas') {
-            return redirect('/petugas/dashboard');
-        } elseif ($user->role === 'owner') {
-            return redirect('/owner/dashboard');
-        }
-
-        return redirect('/admin/dashboard');
+        return back()->withErrors([
+            'username' => 'Username atau password salah.',
+        ])->withInput();
     }
 
     public function logout(Request $request)
     {
-        if (Auth::check()) {
-            // Ambil ID angka milik user yang login
-            $userId = Auth::user()->id;
-
-            LogAktivitas::create([
-                'user_id' => $userId,
-                'aktivitas' => 'Melakukan logout dari sistem',
-                'ip_address' => $request->ip(),
-            ]);
-        }
-
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

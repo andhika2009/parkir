@@ -22,9 +22,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-white-50 text-uppercase fw-bold fs-7 mb-2">Kendaraan Masuk Hari Ini</h6>
-                        <h2 class="fw-bold mb-0">{{ $totalKendaraanHariIni }} Unit</h2>
-                    </div>
+                       <h6 class="text-uppercase fw-bold fs-7 mb-2">Kendaraan Masuk Hari Ini</h6>
+                       <h2>{{ $totalKendaraanHariIni }} Unit</h2>
                     <i class="bi bi-box-arrow-in-right fs-1 opacity-50"></i>
                 </div>
             </div>
@@ -35,8 +34,8 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h6 class="text-white-50 text-uppercase fw-bold fs-7 mb-2">Area Parkir Tersedia</h6>
-                        <h2 class="fw-bold mb-0">{{ $totalArea }} Area</h2>
+                       <h6 class="text-uppercase fw-bold fs-7 mb-2">Area Parkir Tersedia</h6>
+                     <h2>{{ $totalArea }} Area</h2>
                     </div>
                     <i class="bi bi-geo-alt fs-1 opacity-50"></i>
                 </div>
@@ -81,7 +80,7 @@
                 <td>{{ $index + 1 }}</td>
                <td><span class="badge bg-dark fs-6">{{ !empty($k->no_plat) ? $k->no_plat : (!empty($k->plat_nomor) ? $k->plat_nomor : 'B 1234 ABC') }}</span></td>
                 <td>{{ $k->jenis_kendaraan ?? '-' }}</td>
-                <td>{{ $k->pemilik ?? 'Umum' }}</td>
+               <td>{{ $k->kendaraan->user->name ?? 'Umum' }}</td>
             </tr>
         @empty
             <tr>

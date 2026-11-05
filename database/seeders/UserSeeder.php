@@ -12,23 +12,26 @@ class UserSeeder extends Seeder
     {
         // Akun Admin
         User::create([
-            'username' => 'admin',
-            'password' => Hash::make('password123'),
-            'role'     => 'admin',
+            'nama_lengkap' => 'Administrator',
+            'username'     => 'admin',
+            'password'     => Hash::make('password123'),
+            'role'         => 'admin',
         ]);
 
         // Akun Petugas
         User::create([
-            'username' => 'petugas',
-            'password' => Hash::make('password123'),
-            'role'     => 'petugas',
+            'nama_lengkap' => 'Petugas Parkir',
+            'username'     => 'petugas',
+            'password'     => Hash::make('password123'),
+            'role'         => 'petugas',
         ]);
 
         // Akun Owner
         User::create([
-            'username' => 'owner',
-            'password' => Hash::make('password123'),
-            'role'     => 'owner',
+            'nama_lengkap' => 'Owner Parkir',
+            'username'     => 'owner',
+            'password'     => Hash::make('password123'),
+            'role'         => 'owner',
         ]);
     }
 }

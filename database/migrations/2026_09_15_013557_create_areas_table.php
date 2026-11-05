@@ -8,8 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('areas', function (Blueprint $table) {
-            $table->id();
+        Schema::create('tb_area_parkir', function (Blueprint $table) {
+            $table->id('id_area');
             $table->string('nama_area'); // Contoh: Blok A, Blok B
             $table->integer('kapasitas'); // Jumlah total slot
             $table->timestamps();
@@ -18,6 +18,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::dropIfExists('tb_area_parkir');
     }
 };

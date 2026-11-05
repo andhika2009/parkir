@@ -11,8 +11,8 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'tb_users';
+
     protected $primaryKey = 'id_user';
-    public $timestamps = false;
 
     protected $fillable = [
         'nama_lengkap',
@@ -22,13 +22,13 @@ class User extends Authenticatable
         'status_aktif',
     ];
 
-    public function getAuthPassword()
-    {
-        return $this->password;
-    }
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function getAuthIdentifierName()
+    public function getAuthPasswordName()
     {
-        return 'user_name';
+        return 'password';
     }
 }

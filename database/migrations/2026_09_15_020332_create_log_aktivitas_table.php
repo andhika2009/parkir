@@ -10,10 +10,12 @@ return new class extends Migration
     {
         Schema::create('log_aktivitas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
             $table->string('aktivitas');
-            $table->ipAddress('ip_address')->nullable();
+            $table->string('ip_address')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id_user')->on('tb_users')->onDelete('cascade');
         });
     }
 

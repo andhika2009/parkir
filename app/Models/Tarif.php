@@ -8,6 +8,12 @@ class Tarif extends Model
 {
     protected $table = 'tb_tarif';
     protected $primaryKey = 'id_tarif';
+    public $timestamps = false;
 
-    protected $guarded = [];
+    protected $fillable = ['jenis_kendaraan', 'tarif_per_jam'];
+
+    public function getRouteKeyName()
+    {
+        return 'id_tarif';
+    }
 }

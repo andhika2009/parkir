@@ -8,17 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('kendaraans', function (Blueprint $table) {
-            $table->id();
-            $table->string('plat_nomor')->unique();
-            $table->string('pemilik');
-            $table->foreignId('tarif_id')->constrained('tarifs')->onDelete('cascade');
+        Schema::create('tb_kendaraan', function (Blueprint $table) {
+            $table->id('id_kendaraan');
+            $table->string('plat_nomer');
+            $table->string('jenis_kendaraan');
+            $table->string('warna_kendaraan')->nullable();
+            $table->string('pemilik')->nullable();
+            $table->unsignedBigInteger('id_user')->nullable();
             $table->timestamps();
+
+         $table->foreign('id_user')->references('id_user')->on('tb_users')->nullOnDelete();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('kendaraans');
+        Schema::dropIfExists('tb_kendaraan');
     }
 };

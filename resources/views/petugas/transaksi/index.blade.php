@@ -1,111 +1,73 @@
 @extends('layout.layout')
 
+@section('title', 'Transaksi Parkir')
+
 @section('content')
-<div class="container py-4">
-    <h3 class="fw-bold mb-4">Operasional Transaksi Parkir</h3>
+<h3 class="fw-bold mb-4">Operasional Transaksi Parkir</h3>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white fw-bold">
-            Data Kendaraan Dalam Area Parkir (Aktif)
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>No</th>
-                            <th>No Plat</th>
-                            <th>Jenis</th>
-                            <th width="35%" class="text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($dataTampil as $item)
-                        @php 
-                            $row = (object) $item;
-                            $plat = !empty($row->no_plat) && $row->no_plat !== '-' ? $row->no_plat : 'N/A';
-                            $jenis = $row->jenis_kendaraan ?? 'Lainnya';
-                            $waktu = $row->waktu_masuk ?? now()->format('Y-m-d H:i:s');
-                        @endphp
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td class="fw-bold">{{ $plat }}</td>
-                            <td>
-                                <span class="badge bg-info text-dark">
-                                    {{ $jenis }}
-                                </span>
-                            </td>
-                            <td class="text-center">
-                                <button type="button" 
-                                        class="btn btn-success btn-sm fw-semibold"
-                                        onclick="bukaStruk('{{ $loop->iteration }}', '{{ $plat }}', '{{ $jenis }}', '{{ $waktu }}')">
-                                    🖨️ Cetak Struk
-                                </button>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-3">Belum ada data kendaraan aktif.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+@if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white fw-bold">Kendaraan Masuk</div>
+    <div class="card-body">
+        <form method="POST" action="/petugas/transaksi" class="row g-3">
+            @csrf
+            <div class="col-md-4">
+                <label class="form-label">No Plat</label>
+                <input type="text" name="plat_nomer" value="{{ old('plat_nomer') }}" class="form-control @error('plat_nomer') is-invalid @enderror" required>
+                @error('plat_nomer') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
-        </div>
+            <div class="col-md-3">
+                <label class="form-label">Jenis</label>
+                <select name="jenis_kendaraan" class="form-select" required>
+                    @foreach($tarifs as $t)
+                        <option value="{{ $t->jenis_kendaraan }}">{{ $t->jenis_kendaraan }} (Rp {{ number_format($t->tarif_per_jam, 0, ',', '.') }}/jam)</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Area</label>
+                <select name="id_area" class="form-select" required>
+                    @foreach($areas as $a)
+                        <option value="{{ $a->id_area }}">{{ $a->nama_area }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100">Simpan Masuk</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- Modal Struk Thermal -->
-<div class="modal fade" id="modalStruk" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Struk Parkir</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="areaCetakStruk" style="font-family: monospace; font-size: 13px; background: #fff8e7; padding: 15px; border: 1px dashed #000; border-radius: 4px;">
-                    <div style="text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 5px;">SISTEM PARKIR</div>
-                    <div style="text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 10px;">===================</div>
-                    <table width="100%" style="font-family: monospace;">
-                        <tr><td>No. Urut</td><td>: <span id="sNo"></span></td></tr>
-                        <tr><td>No. Plat</td><td>: <span id="sPlat" style="font-weight: bold;"></span></td></tr>
-                        <tr><td>Jenis</td><td>: <span id="sJenis"></span></td></tr>
-                        <tr><td>Masuk</td><td>: <span id="sWaktu"></span></td></tr>
-                    </table>
-                    <div style="text-align: center; border-top: 1px dashed #000; margin-top: 10px; padding-top: 5px;">
-                        Simpan struk ini sebagai bukti parkir.<br>Terima Kasih!
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-primary btn-sm" onclick="eksekusiCetak()">Cetak Sekarang</button>
-            </div>
-        </div>
-    </div>
+<div class="card shadow-sm">
+    <div class="card-header bg-dark text-white fw-bold">Data Kendaraan Dalam Area Parkir (Aktif)</div>
+    <table class="table mb-0">
+        <thead>
+            <tr><th>No</th><th>No Plat</th><th>Jenis</th><th>Area</th><th>Masuk</th><th>Aksi</th></tr>
+        </thead>
+        <tbody>
+            @forelse($aktif as $i => $t)
+                <tr>
+                    <td>{{ $i + 1 }}</td>
+                    <td>{{ $t->kendaraan->plat_nomer ?? '-' }}</td>
+                    <td>{{ $t->kendaraan->jenis_kendaraan ?? '-' }}</td>
+                    <td>{{ $t->area->nama_area ?? '-' }}</td>
+                    <td>{{ $t->waktu_masuk->format('d/m/Y H:i') }}</td>
+                    <td>
+                        <form method="POST" action="/petugas/transaksi/{{ $t->id_transaksi }}/keluar" onsubmit="return confirm('Proses kendaraan keluar?')">
+                            @csrf
+                            @method('PUT')
+                            <button class="btn btn-sm btn-danger">Keluar &amp; Cetak Struk</button>
+                        </form>
+                    </td>
+                </tr>
+            @empty
+                <tr><td colspan="6" class="text-center py-4 text-muted">Belum ada data kendaraan aktif.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
 </div>
-
-<!-- Script Modal & Cetak -->
-<script>
-function bukaStruk(no, plat, jenis, waktu) {
-    document.getElementById('sNo').innerText = no;
-    document.getElementById('sPlat').innerText = plat;
-    document.getElementById('sJenis').innerText = jenis.toUpperCase();
-    document.getElementById('sWaktu').innerText = waktu;
-    
-    let modal = new bootstrap.Modal(document.getElementById('modalStruk'));
-    modal.show();
-}
-
-function eksekusiCetak() {
-    let isi = document.getElementById('areaCetakStruk').innerHTML;
-    let win = window.open('', '', 'height=500,width=400');
-    win.document.write('<html><head><title>Cetak Struk</title></head><body>');
-    win.document.write(isi);
-    win.document.write('</body></html>');
-    win.document.close();
-    win.print();
-}
-</script>
 @endsection

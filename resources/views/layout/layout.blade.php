@@ -20,6 +20,7 @@
                     <a href="{{ route('admin.dashboard') }}" class="nav-link text-white {{ request()->is('admin/dashboard') ? 'active bg-primary' : '' }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard Admin</a>
                     <a href="{{ route('admin.area.index') }}" class="nav-link text-white {{ request()->is('admin/area*') ? 'active bg-primary' : '' }}"><i class="bi bi-geo-alt me-2"></i> Area Parkir</a>
                     <a href="{{ route('admin.kendaraan.index') }}" class="nav-link text-white {{ request()->is('admin/kendaraan*') ? 'active bg-primary' : '' }}"><i class="bi bi-car-front me-2"></i> Kendaraan</a>
+                    <a href="{{ route('admin.tarif.index') }}" class="nav-link text-white {{ request()->routeIs('admin.tarif.*') ? 'bg-primary active' : '' }}"> <i class="bi bi-tags-fill"></i> Tarif Kendaraan</a>
                     <a href="{{ route('admin.log.index') }}" class="nav-link text-white {{ request()->is('admin/log*') ? 'active bg-primary' : '' }}"><i class="bi bi-journal-text me-2"></i> Log Aktivitas</a>
                 @elseif(auth()->check() && auth()->user()->role == 'owner')
                     <a href="{{ route('owner.dashboard') }}" class="nav-link text-white {{ request()->is('owner/dashboard') ? 'active bg-primary' : '' }}"><i class="bi bi-speedometer2 me-2"></i> Dashboard Owner</a>
