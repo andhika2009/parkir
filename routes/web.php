@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('admin/tarif', TarifController::class, [
             'names' => 'admin.tarif'
         ]);
+        
 
         Route::resource('admin/area', AreaController::class, [
             'names' => 'admin.area'

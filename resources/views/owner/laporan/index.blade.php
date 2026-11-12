@@ -26,10 +26,10 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>TRX-{{ $row->id_transaksi ?? $row->id ?? '-' }}</td>
-                            <td class="fw-bold">{{ $row->no_plat ?? $row->plat_nomor ?? 'N/A' }}</td>
+                            <td class="fw-bold">{{ $row->plat_nomer ?? 'N/A' }}</td>
                             <td>{{ $row->waktu_masuk ?? $row->created_at ?? '-' }}</td>
-                            <td>{{ $row->petugas ?? 'Petugas' }}</td>
-                            <td>Rp {{ number_format($row->total_bayar ?? $row->bayar ?? $row->tarif_per_jam ?? 0, 0, ',', '.') }}</td>
+                            <td>{{ $row->nama_petugas ?? '-' }}</td>
+                            <td>Rp {{ number_format($row->biaya_total ?? 0, 0, ',', '.') }}</td>
                             <td>
                                 <span class="badge bg-{{ ($row->status ?? '') == 'Selesai' ? 'success' : 'warning' }}">
                                     {{ $row->status ?? 'Aktif' }}

@@ -14,6 +14,7 @@
             <thead class="table-light">
                 <tr>
                     <th>No</th>
+                    <th>Nama Lengkap</th>
                     <th>Username</th>
                     <th>Role</th>
                     <th>Aksi</th>

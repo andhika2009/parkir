@@ -9,10 +9,17 @@ class LaporanController extends Controller
 {
     public function index()
     {
-        // Mengambil data transaksi tanpa memaksakan nama kolom id_transaksi
-        $laporan = DB::table('tb_transaksi')
+            $laporan = DB::table('tb_transaksi')
             ->leftJoin('tb_tarif', 'tb_transaksi.id_tarif', '=', 'tb_tarif.id_tarif')
-            ->select('tb_transaksi.*', 'tb_tarif.jenis_kendaraan', 'tb_tarif.tarif_per_jam')
+            ->leftJoin('tb_kendaraan', 'tb_transaksi.id_kendaraan', '=', 'tb_kendaraan.id_kendaraan')
+            ->leftJoin('tb_users', 'tb_transaksi.id_user', '=', 'tb_users.id_user')
+            ->select(
+                'tb_transaksi.*',
+                'tb_tarif.jenis_kendaraan',
+                'tb_kendaraan.plat_nomer',
+                'tb_users.nama_lengkap as nama_petugas'
+            )
+            ->orderBy('tb_transaksi.id_transaksi')
             ->get();
 
         return view('owner.laporan.index', compact('laporan'));

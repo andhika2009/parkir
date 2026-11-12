@@ -13,4 +13,12 @@ class Kendaraan extends Model
     protected $primaryKey = 'id_kendaraan';
 
     protected $guarded = [];
+
+    public function user()
+{
+    return $this->belongsTo(User::class, 'id_user', 'id_user');
+
+}
+
+public $timestamps = false;
 }

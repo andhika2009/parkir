@@ -6,13 +6,29 @@
     <div class="card-header bg-white">
         <h5 class="m-0">Tambah User Baru</h5>
     </div>
-    <div class="card-body">
-        <form action="{{ route('admin.user.store') }}" method="POST">
+            <div class="card-body">
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+      <form action="{{ route('admin.user.store') }}" method="POST">
             @csrf
+
+        <div class="mb-3">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" name="nama_lengkap" class="form-control"
+                value="{{ old('nama_lengkap') }}" required>
+         </div>
             <div class="mb-3">
                 <label class="form-label">Username</label>
-                <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" required>
-                @error('username') <div class="invalid-feedback">{{ $message }}</div> @enderror
+               <input type="text" name="user_name" class="form-control @error('user_name') is-invalid @enderror"
+       value="{{ old('user_name') }}" required>
+@error('user_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
             <div class="mb-3">
                 <label class="form-label">Password</label>

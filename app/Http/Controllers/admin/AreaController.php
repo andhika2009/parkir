@@ -2,29 +2,16 @@
 
 namespace App\Http\Controllers\admin;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Area;
+use App\Models\Transaksi;
+use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
-    private function getInitialAreas()
-    {
-        return [
-            ['id_area' => 1, 'nama_area' => 'Lantai 1 - Blok A', 'kapasitas' => 50],
-            ['id_area' => 2, 'nama_area' => 'Lantai 1 - Blok B', 'kapasitas' => 30],
-            ['id_area' => 3, 'nama_area' => 'Lantai 2 - VIP', 'kapasitas' => 15],
-        ];
-    }
-
     public function index()
     {
-        if (!session()->has('dummy_areas')) {
-            session(['dummy_areas' => $this->getInitialAreas()]);
-        }
-
-        $areasData = session('dummy_areas');
-        $areas = collect(array_map(fn($item) => (object)$item, $areasData));
-
+        $areas = Area::orderBy('id_area')->get();
         return view('admin.area.index', compact('areas'));
     }
 
@@ -35,72 +22,46 @@ class AreaController extends Controller
 
     public function store(Request $request)
     {
-        $areas = session('dummy_areas', $this->getInitialAreas());
+        $data = $request->validate([
+            'nama_area' => 'required|string|max:100',
+            'kapasitas' => 'required|integer|min:1',
+        ]);
 
-        $maxId = 0;
-        foreach ($areas as $a) {
-            if ($a['id_area'] > $maxId) {
-                $maxId = $a['id_area'];
-            }
-        }
-
-        $newItem = [
-            'id_area' => $maxId + 1,
-            'nama_area' => $request->nama_area ?? 'Area Baru',
-            'kapasitas' => $request->kapasitas ?? 20,
-        ];
-
-        $areas[] = $newItem;
-        session(['dummy_areas' => $areas]);
+        Area::create($data);
 
         return redirect()->route('admin.area.index')->with('success', 'Area berhasil ditambahkan!');
     }
 
-  public function edit($id)
+    public function edit($id)
     {
-        $areas = session('dummy_areas', $this->getInitialAreas());
-        $found = null;
-        
-        foreach ($areas as $a) {
-            if ($a['id_area'] == $id) {
-                $found = $a;
-                break;
-            }
-        }
-
-        $areaData = $found ?? ['id_area' => $id, 'nama_area' => 'Lantai 1 - Blok A', 'kapasitas' => 50];
-        
-        // Obje yapısını oluştururken id_area ve id değerlerini sayısal (string/int) olarak kesinleştiriyoruz
-        $area = (object) $areaData;
-
+        $area = Area::findOrFail($id);
         return view('admin.area.edit', compact('area'));
     }
 
     public function update(Request $request, $id)
     {
-        $areas = session('dummy_areas', $this->getInitialAreas());
+        $area = Area::findOrFail($id);
 
-        foreach ($areas as &$a) {
-            if ($a['id_area'] == $id) {
-                $a['nama_area'] = $request->nama_area ?? $a['nama_area'];
-                $a['kapasitas'] = $request->kapasitas ?? $a['kapasitas'];
-            }
-        }
+        $data = $request->validate([
+            'nama_area' => 'required|string|max:100',
+            'kapasitas' => 'required|integer|min:1',
+        ]);
 
-        session(['dummy_areas' => $areas]);
+        $area->update($data);
 
         return redirect()->route('admin.area.index')->with('success', 'Area berhasil diupdate!');
     }
 
     public function destroy($id)
     {
-        $areas = session('dummy_areas', $this->getInitialAreas());
+        $area = Area::findOrFail($id);
 
-        $newAreas = array_values(array_filter($areas, function ($item) use ($id) {
-            return $item['id_area'] != $id;
-        }));
+        if (Transaksi::where('id_area', $id)->exists()) {
+            return redirect()->route('admin.area.index')
+                ->with('error', 'Area tidak bisa dihapus karena sudah dipakai di transaksi.');
+        }
 
-        session(['dummy_areas' => $newAreas]);
+        $area->delete();
 
         return redirect()->route('admin.area.index')->with('success', 'Area berhasil dihapus!');
     }
